@@ -1,3 +1,4 @@
+//---------by 611------------//
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -19,31 +20,31 @@ using namespace std;
 #define Real_Item_Nums 27121713
 
 
-struct BUCKET//¶¨ÒåÍ°½á¹¹Ìå
+struct BUCKET//å®šä¹‰æ¡¶ç»“æ„ä½“
 {
-    uint64_t Key;//¶¨ÒåÁ÷±êÊ¶£¨ÕâÀïÊÇÈ¡ÁË8¸ö×Ö½Ú£©
+    uint64_t Key;//å®šä¹‰æµæ ‡è¯†ï¼ˆè¿™é‡Œæ˜¯å–äº†8ä¸ªå­—èŠ‚ï¼‰
     uint32_t V_Sum_Count;
-    int Count;//×¢Òâ£¬ÕâÆªMV-SketchÀïÉæ¼°µ½Ë¥¼õ£¬ÄÇÃ´¾ÍÓĞË¥¼õµ½¸ºÊıµÄ¿ÉÄÜ£¬Èç¹û°ÑCountÉè¼Æ³ÉÎŞ·ûºÅÕûÊıµÄ»°£¬Ò»µ©Ë¥¼õµ½¸ºÊı£¬Count¾Í»á³öÏÖÒì³££¬ËùÒÔÕâÆªÀïCount²»ÄÜÓÃÎŞ·ûºÅÕûÊıÀ´¶¨Òå
+    int Count;
 };
 
 
 
-BOBHash32 *Hash[d];//¶¨Òåd¸ö¹şÏ£º¯Êı£¨È«¾Ö±äÁ¿£©
+BOBHash32 *Hash[d];//å®šä¹‰dä¸ªå“ˆå¸Œå‡½æ•°ï¼ˆå…¨å±€å˜é‡ï¼‰
 
 
-unordered_map <uint64_t,int> Real_KV_Map;//ÕæÊµµÄ¼üÖµ¶ÔĞÅÏ¢£¨MAPÀàĞÍ´æ´¢£©
-unordered_map <uint64_t,int> Estimated_KV_MAP;//Ëã·¨¹À¼ÆµÄ¼üÖµ¶ÔĞÅÏ¢£¨MAPÀàĞÍ´æ´¢£©
-vector < pair <uint64_t,int> > Real_KV_Vector;//ÕæÊµµÄ¼üÖµ¶ÔĞÅÏ¢£¨VectorÀàĞÍ´æ´¢£¬ÒÑ°´¼ÆÊıÖµ´Ó´óµ½Ğ¡ÅÅĞò£©
-vector < pair <uint64_t,int> > Estimated_KV_Vector;//¹À¼ÆµÄ¼üÖµ¶ÔĞÅÏ¢£¨VectorÀàĞÍ´æ´¢£¬ÒÑ°´¼ÆÊıÖµ´Ó´óµ½Ğ¡ÅÅĞò£©
-set <uint64_t> All_Key;//´æËùÓĞµÄkey£¬·½±ã²éÑ¯
+unordered_map <uint64_t,int> Real_KV_Map;//çœŸå®çš„é”®å€¼å¯¹ä¿¡æ¯ï¼ˆMAPç±»å‹å­˜å‚¨ï¼‰
+unordered_map <uint64_t,int> Estimated_KV_MAP;//ç®—æ³•ä¼°è®¡çš„é”®å€¼å¯¹ä¿¡æ¯ï¼ˆMAPç±»å‹å­˜å‚¨ï¼‰
+vector < pair <uint64_t,int> > Real_KV_Vector;//çœŸå®çš„é”®å€¼å¯¹ä¿¡æ¯ï¼ˆVectorç±»å‹å­˜å‚¨ï¼Œå·²æŒ‰è®¡æ•°å€¼ä»å¤§åˆ°å°æ’åºï¼‰
+vector < pair <uint64_t,int> > Estimated_KV_Vector;//ä¼°è®¡çš„é”®å€¼å¯¹ä¿¡æ¯ï¼ˆVectorç±»å‹å­˜å‚¨ï¼Œå·²æŒ‰è®¡æ•°å€¼ä»å¤§åˆ°å°æ’åºï¼‰
+set <uint64_t> All_Key;//å­˜æ‰€æœ‰çš„keyï¼Œæ–¹ä¾¿æŸ¥è¯¢
 
 
-bool Cmp(const pair<uint64_t,int> x,const pair<uint64_t,int> y)//ÓÃÓÚMap×ªVectorºó£¬°´ÕÕ¼üÖµ¶ÔµÄÖµ´Ó´óµ½Ğ¡ÅÅĞò
+bool Cmp(const pair<uint64_t,int> x,const pair<uint64_t,int> y)//ç”¨äºMapè½¬Vectoråï¼ŒæŒ‰ç…§é”®å€¼å¯¹çš„å€¼ä»å¤§åˆ°å°æ’åº
 {
     return x.second>y.second;
 }
 
-void Get_All_Key()//»ñÈ¡Êı¾İÁ÷ÖĞËùÓĞÖÖKey
+void Get_All_Key()//è·å–æ•°æ®æµä¸­æ‰€æœ‰ç§Key
 {
     uint64_t temp_key;
     FILE *fp=fopen("src+dst IP.dat","rb");
@@ -52,10 +53,10 @@ void Get_All_Key()//»ñÈ¡Êı¾İÁ÷ÖĞËùÓĞÖÖKey
         All_Key.insert(temp_key);
     }
 }
-void Map_To_Vector(unordered_map <uint64_t,int> &KV_Map,vector <pair<uint64_t,int>> &KV_Vector,FILE *fp)//MAP×ªVector£¨²ÎÊıÀïµÄÎÄ¼şÊÇÎªÁË¿ÉÊÓ»¯£¬¿ÉÒÔÈ¥µô£©
+void Map_To_Vector(unordered_map <uint64_t,int> &KV_Map,vector <pair<uint64_t,int>> &KV_Vector,FILE *fp)//MAPè½¬Vectorï¼ˆå‚æ•°é‡Œçš„æ–‡ä»¶æ˜¯ä¸ºäº†å¯è§†åŒ–ï¼Œå¯ä»¥å»æ‰ï¼‰
 {
 
-    for(auto it=KV_Map.begin();it!=KV_Map.end();it++)//´ÓÍê³ÉµÄMAPÖĞ×ª´æµ½VectorÖĞ£¬²¢°´¼ÆÊıÖµ´Ó´óµ½Ğ¡½øĞĞÅÅĞò£¨ÒòÎªMAPµÄÅÅĞòÊÇ°´ÕÕkeyÅÅµÄ£¬µ«ÊÇĞèÒªÓÃvalueÅÅ£¬¶øÖ±½ÓÓÃvectorÓÖ²»ÄÜÈ¥ÖØ£¬ËùÒÔÎªÁË¼ÈÄÜÈ¥ÖØÓÖÄÜÅÅĞò£¬Ö»ÄÜÏÈÓÃMap´æÔÙÓÃVectorÅÅ£©
+    for(auto it=KV_Map.begin();it!=KV_Map.end();it++)//ä»å®Œæˆçš„MAPä¸­è½¬å­˜åˆ°Vectorä¸­ï¼Œå¹¶æŒ‰è®¡æ•°å€¼ä»å¤§åˆ°å°è¿›è¡Œæ’åºï¼ˆå› ä¸ºMAPçš„æ’åºæ˜¯æŒ‰ç…§keyæ’çš„ï¼Œä½†æ˜¯éœ€è¦ç”¨valueæ’ï¼Œè€Œç›´æ¥ç”¨vectoråˆä¸èƒ½å»é‡ï¼Œæ‰€ä»¥ä¸ºäº†æ—¢èƒ½å»é‡åˆèƒ½æ’åºï¼Œåªèƒ½å…ˆç”¨Mapå­˜å†ç”¨Vectoræ’ï¼‰
     {
         KV_Vector.push_back(make_pair(it->first,it->second));
     }
@@ -70,7 +71,7 @@ void Map_To_Vector(unordered_map <uint64_t,int> &KV_Map,vector <pair<uint64_t,in
     }
 
 }
-void Get_Real_KV()//´ÓdatÎÄ¼şÖĞÍ³¼ÆĞÅÏ¢£¬Í³¼Æ³öËùÓĞµÄ¼üÖµ¶ÔĞÅÏ¢£¨ÕæÕıµÄ£©
+void Get_Real_KV()//ä»datæ–‡ä»¶ä¸­ç»Ÿè®¡ä¿¡æ¯ï¼Œç»Ÿè®¡å‡ºæ‰€æœ‰çš„é”®å€¼å¯¹ä¿¡æ¯ï¼ˆçœŸæ­£çš„ï¼‰
 {
     uint64_t temp_key;
     FILE *fp=fopen("src+dst IP.dat","rb");
@@ -92,7 +93,7 @@ void Get_Real_KV()//´ÓdatÎÄ¼şÖĞÍ³¼ÆĞÅÏ¢£¬Í³¼Æ³öËùÓĞµÄ¼üÖµ¶ÔĞÅÏ¢£¨ÕæÕıµÄ£©
     Map_To_Vector(Real_KV_Map,Real_KV_Vector,Real_Result);
 }
 
-void Create_Sketch_Init(BUCKET *bucket,int w)//SketchµÄ½¨Á¢ºÍ³õÊ¼»¯£¨ÕâÀïÏàµ±ÓÚ°Ñ¶şÎ¬Êı×é¿´³ÉÒ»Î¬Êı×éÀ´´¦Àí£©
+void Create_Sketch_Init(BUCKET *bucket,int w)//Sketchçš„å»ºç«‹å’Œåˆå§‹åŒ–ï¼ˆè¿™é‡Œç›¸å½“äºæŠŠäºŒç»´æ•°ç»„çœ‹æˆä¸€ç»´æ•°ç»„æ¥å¤„ç†ï¼‰
 {
     for(int i=0;i<d*w;i++)
     {
@@ -106,10 +107,10 @@ void Create_Sketch_Init(BUCKET *bucket,int w)//SketchµÄ½¨Á¢ºÍ³õÊ¼»¯£¨ÕâÀïÏàµ±ÓÚ°
     }
 }
 
-void Print_Sketch_Info(BUCKET *bucket,int w)//Êä³ö¶şÎ¬±íĞÅÏ¢£¨ÓÃÓÚ±à³ÌÊ±µÄÑéÖ¤£¬¿ÉÒÔÈ¥µô£©
+void Print_Sketch_Info(BUCKET *bucket,int w)//è¾“å‡ºäºŒç»´è¡¨ä¿¡æ¯ï¼ˆç”¨äºç¼–ç¨‹æ—¶çš„éªŒè¯ï¼Œå¯ä»¥å»æ‰ï¼‰
 {
-    int j=0;//ÓÃÀ´·½±ã¶şÎ¬ÊÓÍ¼µÄ
-    //cout<<"µÚ"<<j+1<<"ĞĞµÄĞÅÏ¢£º"£»
+    int j=0;//ç”¨æ¥æ–¹ä¾¿äºŒç»´è§†å›¾çš„
+    //cout<<"ç¬¬"<<j+1<<"è¡Œçš„ä¿¡æ¯ï¼š"ï¼›
     for(int i=0;i<d*w;i++)
     {
         cout<<"{"<<bucket[i].Count<<" ";
@@ -121,7 +122,7 @@ void Print_Sketch_Info(BUCKET *bucket,int w)//Êä³ö¶şÎ¬±íĞÅÏ¢£¨ÓÃÓÚ±à³ÌÊ±µÄÑéÖ¤£¬
     }
 }
 
-void Update_Sketch(BUCKET *bucket,int w)//SketchµÄ¸üĞÂ
+void Update_Sketch(BUCKET *bucket,int w)//Sketchçš„æ›´æ–°
 {
     int index=0,pos=0;
     uint32_t Hash_Value=0;
@@ -130,14 +131,14 @@ void Update_Sketch(BUCKET *bucket,int w)//SketchµÄ¸üĞÂ
     uint64_t temp_key;
     while(fread(&temp_key,1,KEY_SIZE,fp)==KEY_SIZE)
     {
-        for(int i=0;i<d;i++)//¿ØÖÆ¹şÏ£º¯ÊıµÄÑ­»·
+        for(int i=0;i<d;i++)//æ§åˆ¶å“ˆå¸Œå‡½æ•°çš„å¾ªç¯
         {
             //fread(&temp,1,KEY_SIZE,fp);
             //bucket[i].Key=temp;
             //fwrite(&bucket[i].Key,8,1,TEMP);
-            Hash_Value=Hash[i]->run((const char*)&temp_key,KEY_SIZE);//¸ù¾İBOBHash²úÉú¹şÏ£Öµ
-            //cout<<"¹şÏ£ÖµÎª£º"<<Hash_Value<<"\n";
-            index=Hash_Value%w;//½«¹şÏ£ÖµÍ¶Èë¶şÎ¬±íÖĞ£¬»ñÈ¡µ±Ç°ĞĞµÄË÷ÒıÖµ
+            Hash_Value=Hash[i]->run((const char*)&temp_key,KEY_SIZE);//æ ¹æ®BOBHashäº§ç”Ÿå“ˆå¸Œå€¼
+            //cout<<"å“ˆå¸Œå€¼ä¸ºï¼š"<<Hash_Value<<"\n";
+            index=Hash_Value%w;//å°†å“ˆå¸Œå€¼æŠ•å…¥äºŒç»´è¡¨ä¸­ï¼Œè·å–å½“å‰è¡Œçš„ç´¢å¼•å€¼
             //cout<<index<<"\n";
             pos=i*w+index;
             bucket[pos].V_Sum_Count++;
@@ -163,15 +164,15 @@ void Update_Sketch(BUCKET *bucket,int w)//SketchµÄ¸üĞÂ
     }
 }
 
-void Query_and_Statistics(BUCKET *bucket,int w)//SketchµÄ²éÑ¯ºÍÍ³¼Æ£¬¼´°´ÕÕËùÓÃËã·¨Í³¼Æ³ö¹À¼ÆµÄ¼üÖµ¶ÔĞÅÏ¢
+void Query_and_Statistics(BUCKET *bucket,int w)//Sketchçš„æŸ¥è¯¢å’Œç»Ÿè®¡ï¼Œå³æŒ‰ç…§æ‰€ç”¨ç®—æ³•ç»Ÿè®¡å‡ºä¼°è®¡çš„é”®å€¼å¯¹ä¿¡æ¯
 {
     FILE *Estimated_Result=fopen("Estimated_Result.dat","wb");
     int temp_value=0, index=0,pos=0,estimated_value=0;
     uint64_t temp_key;
     uint32_t Hash_Value=0;
-    for(auto it=All_Key.begin();it!=All_Key.end();it++)//°¤¸ö±éÀú´æ·ÅËùÓĞ¼üµÄ¼¯ºÏ
+    for(auto it=All_Key.begin();it!=All_Key.end();it++)//æŒ¨ä¸ªéå†å­˜æ”¾æ‰€æœ‰é”®çš„é›†åˆ
     {
-        for(int i=0;i<d;i++)//²éÑ¯µ½µ±Ç°¼üµÄ¼ÆÊıÖµ
+        for(int i=0;i<d;i++)//æŸ¥è¯¢åˆ°å½“å‰é”®çš„è®¡æ•°å€¼
         {
             Hash_Value=Hash[i]->run((const char*)&(*it),KEY_SIZE);
             index=Hash_Value%w;
@@ -195,17 +196,17 @@ void Query_and_Statistics(BUCKET *bucket,int w)//SketchµÄ²éÑ¯ºÍÍ³¼Æ£¬¼´°´ÕÕËùÓÃË
 
         }
         temp_key=*it;
-        Estimated_KV_MAP.insert(make_pair(temp_key,estimated_value));//°Ñ»ñÈ¡µ½µÄ¼üÖµ²åÈëµ½MAPÖĞ
+        Estimated_KV_MAP.insert(make_pair(temp_key,estimated_value));//æŠŠè·å–åˆ°çš„é”®å€¼æ’å…¥åˆ°MAPä¸­
     }
     Map_To_Vector(Estimated_KV_MAP,Estimated_KV_Vector,Estimated_Result);
 }
 
-void Parameter_Threshold_Version(int threshold,vector <pair<uint64_t,int> > Estimated_Vector,vector <pair<uint64_t,int> > Real_Vector,FILE *fp)//²ÎÊıÍ³¼Æ£¨ãĞÖµ°æ£©
+void Parameter_Threshold_Version(int threshold,vector <pair<uint64_t,int> > Estimated_Vector,vector <pair<uint64_t,int> > Real_Vector,FILE *fp)//å‚æ•°ç»Ÿè®¡ï¼ˆé˜ˆå€¼ç‰ˆï¼‰
 {
     int Real_Sx,Estimated_Sx;
     float Real_Heavy_hitter_Nums=0,Estimated_Heavy_hitter_Nums=0,Sum_ARE=0,Sum_AAE=0;
 
-    //¼ÆËã¾«È·ÂÊprecisionºÍARE
+    //è®¡ç®—ç²¾ç¡®ç‡precisionå’ŒARE
     for(int i=0;i<Real_Vector.size();i++)
     {
         if(Real_Vector[i].second>=threshold)
@@ -230,22 +231,22 @@ void Parameter_Threshold_Version(int threshold,vector <pair<uint64_t,int> > Esti
         else break;
 
     }
-    cout<<"ÕæÕıµÄ³¤Á÷ÊıÁ¿Îª£º"<<Real_Heavy_hitter_Nums<<"\n";
-    cout<<"¸ÃËã·¨Ê¶±ğ³öµÄ³¤Á÷ÊıÁ¿Îª£º"<<Estimated_Heavy_hitter_Nums<<"\n";
+    cout<<"çœŸæ­£çš„é•¿æµæ•°é‡ä¸ºï¼š"<<Real_Heavy_hitter_Nums<<"\n";
+    cout<<"è¯¥ç®—æ³•è¯†åˆ«å‡ºçš„é•¿æµæ•°é‡ä¸ºï¼š"<<Estimated_Heavy_hitter_Nums<<"\n";
     float precision=Estimated_Heavy_hitter_Nums/Real_Heavy_hitter_Nums;
     cout<<"**************************************\n";
-    cout<<"ÖØÁ÷Ê¶±ğµÄ¾«È·¶È(Precision)£º"<<precision*100.0<<"%\n";
+    cout<<"é‡æµè¯†åˆ«çš„ç²¾ç¡®åº¦(Precision)ï¼š"<<precision*100.0<<"%\n";
     float ARE=float(Sum_ARE/float(abs(Real_Heavy_hitter_Nums)));
     float AAE=float(Sum_AAE/float(abs(Real_Heavy_hitter_Nums)));
     float log10_ARE=log10(ARE);
-    cout<<"Æ½¾ùÏà¶ÔÎó²î(ARE)£º"<<ARE<<"\n";
-    cout<<"Æ½¾ù¾ø¶ÔÎó²î(AAE)£º"<<AAE<<"\n";
+    cout<<"å¹³å‡ç›¸å¯¹è¯¯å·®(ARE)ï¼š"<<ARE<<"\n";
+    cout<<"å¹³å‡ç»å¯¹è¯¯å·®(AAE)ï¼š"<<AAE<<"\n";
     cout<<"**************************************\n";
     fprintf(fp,"%f,%f,%f,%f,",precision,ARE,AAE,log10_ARE);
 
 
 
-    //¼ÆËã»ØÕÙÂÊrecall(¾ÍÊÇÃüÖĞÂÊ£©
+    //è®¡ç®—å›å¬ç‡recall(å°±æ˜¯å‘½ä¸­ç‡ï¼‰
     Estimated_Heavy_hitter_Nums=0;
     float Correct_Estimated_Heavy_hitter_Nums=0;
     for(int i=0;i<Estimated_Vector.size();i++)
@@ -264,16 +265,16 @@ void Parameter_Threshold_Version(int threshold,vector <pair<uint64_t,int> > Esti
         }
         else break;
     }
-    cout<<"¸ÃËã·¨Ê¶±ğ³öµÄ³¤Á÷ÊıÁ¿Îª£º"<<Estimated_Heavy_hitter_Nums<<"\n";
-    cout<<"ÆäÖĞÃüÖĞµÄ³¤Á÷ÊıÁ¿Îª£º"<<Correct_Estimated_Heavy_hitter_Nums<<"\n";
+    cout<<"è¯¥ç®—æ³•è¯†åˆ«å‡ºçš„é•¿æµæ•°é‡ä¸ºï¼š"<<Estimated_Heavy_hitter_Nums<<"\n";
+    cout<<"å…¶ä¸­å‘½ä¸­çš„é•¿æµæ•°é‡ä¸ºï¼š"<<Correct_Estimated_Heavy_hitter_Nums<<"\n";
     float recall=Correct_Estimated_Heavy_hitter_Nums/Estimated_Heavy_hitter_Nums;
     cout<<"**************************************\n";
-    cout<<"ÖØÁ÷Ê¶±ğµÄ»ØÕÙÂÊ(Recall)£º"<<recall*100.0<<"%\n";
+    cout<<"é‡æµè¯†åˆ«çš„å›å¬ç‡(Recall)ï¼š"<<recall*100.0<<"%\n";
     cout<<"**************************************\n";
 
-    //¼ÆËãF1µÃ·Ö
+    //è®¡ç®—F1å¾—åˆ†
     float f1_score=float((2.0*precision*recall)/precision+recall);
-    cout<<"F1 ScoreÎª£º"<<f1_score<<"\n";
+    cout<<"F1 Scoreä¸ºï¼š"<<f1_score<<"\n";
     cout<<"**************************************\n";
 
     fprintf(fp,"%f,%f\n",recall,f1_score);
@@ -281,13 +282,13 @@ void Parameter_Threshold_Version(int threshold,vector <pair<uint64_t,int> > Esti
 }
 
 
-void Parameter_Top_K_Version(int K,vector <pair<uint64_t,int> > Estimated_Vector,vector <pair<uint64_t,int> > Real_Vector,FILE *fp)//²ÎÊıÍ³¼Æ£¨Top-K°æ£©
+void Parameter_Top_K_Version(int K,vector <pair<uint64_t,int> > Estimated_Vector,vector <pair<uint64_t,int> > Real_Vector,FILE *fp)//å‚æ•°ç»Ÿè®¡ï¼ˆTop-Kç‰ˆï¼‰
 {
 
     int Real_Sx,Estimated_Sx;
     float Estimated_Heavy_hitter_Nums=0,Sum_ARE=0,Sum_AAE=0;
 
-    //¼ÆËã¾«È·ÂÊprecisionºÍARE
+    //è®¡ç®—ç²¾ç¡®ç‡precisionå’ŒARE
     for(int i=0;i<K;i++)
     {
         Real_Sx=Real_Vector[i].second;
@@ -302,16 +303,16 @@ void Parameter_Top_K_Version(int K,vector <pair<uint64_t,int> > Estimated_Vector
         Sum_ARE=Sum_ARE+float(float(abs(Real_Sx-Estimated_Sx))/float(Real_Sx));
         Sum_AAE=Sum_AAE+float(float(abs(Real_Sx-Estimated_Sx)));
     }
-    cout<<"µ±Ç°Éè¶¨µÄTop-kµÄKÖµÎª£º"<<K<<"\n";
-    cout<<"¸ÃËã·¨Ê¶±ğÕıÈ·µÄÊıÁ¿Îª£º"<<Estimated_Heavy_hitter_Nums<<"\n";
+    cout<<"å½“å‰è®¾å®šçš„Top-kçš„Kå€¼ä¸ºï¼š"<<K<<"\n";
+    cout<<"è¯¥ç®—æ³•è¯†åˆ«æ­£ç¡®çš„æ•°é‡ä¸ºï¼š"<<Estimated_Heavy_hitter_Nums<<"\n";
     float precision=Estimated_Heavy_hitter_Nums/K;
     float ARE=float(Sum_ARE/float(abs(K)));
     float AAE=float(Sum_AAE/float(abs(K)));
     float log10_ARE=log10(ARE);
     cout<<"**************************************\n";
-    cout<<"ÖØÁ÷Ê¶±ğµÄ¾«È·¶È(Precision)£º"<<precision*100.0<<"%\n";
-    cout<<"Æ½¾ùÏà¶ÔÎó²î(ARE)£º"<<ARE<<"\n";
-    cout<<"Æ½¾ù¾ø¶ÔÎó²î(AAE)£º"<<AAE<<"\n";
+    cout<<"é‡æµè¯†åˆ«çš„ç²¾ç¡®åº¦(Precision)ï¼š"<<precision*100.0<<"%\n";
+    cout<<"å¹³å‡ç›¸å¯¹è¯¯å·®(ARE)ï¼š"<<ARE<<"\n";
+    cout<<"å¹³å‡ç»å¯¹è¯¯å·®(AAE)ï¼š"<<AAE<<"\n";
     cout<<"**************************************\n";
 
     //fprintf(fp,"%.2f\n",precision);
@@ -325,18 +326,18 @@ int main()
     int Top_K[6]={200,300,400,500,600,700};
     int Memory[6]={30,50,75,100,125,150};
 
-    cout<<"ÇëÊäÈëÄãµÄĞèÇó£º\n";
-    cout<<"ÕÒTop-K:   ²»Í¬KÖµ£¨KÖµÎª200¡ª700²»µÈ£© -------------  °´0\n";
-    cout<<"ÕÒTop-K:   ²»Í¬ÄÚ´æ£¨ÄÚ´æÎª30KB¡ª150KB²»µÈ£© -------------  °´1\n";
-    cout<<"ÕÒ³¬¹ıãĞÖµTµÄ£º   ²»Í¬ãĞÖµ£¨ãĞÖµÎª500¡ª5000²»µÈ£© -------------  °´2\n";
-    cout<<"ÕÒ³¬¹ıãĞÖµTµÄ£º   ²»Í¬ÄÚ´æ£¨ÄÚ´æÎª30KB¡ª150KB²»µÈ£© -------------  °´3\n";
+    cout<<"è¯·è¾“å…¥ä½ çš„éœ€æ±‚ï¼š\n";
+    cout<<"æ‰¾Top-K:   ä¸åŒKå€¼ï¼ˆKå€¼ä¸º200â€”700ä¸ç­‰ï¼‰ -------------  æŒ‰0\n";
+    cout<<"æ‰¾Top-K:   ä¸åŒå†…å­˜ï¼ˆå†…å­˜ä¸º30KBâ€”150KBä¸ç­‰ï¼‰ -------------  æŒ‰1\n";
+    cout<<"æ‰¾è¶…è¿‡é˜ˆå€¼Tçš„ï¼š   ä¸åŒé˜ˆå€¼ï¼ˆé˜ˆå€¼ä¸º500â€”5000ä¸ç­‰ï¼‰ -------------  æŒ‰2\n";
+    cout<<"æ‰¾è¶…è¿‡é˜ˆå€¼Tçš„ï¼š   ä¸åŒå†…å­˜ï¼ˆå†…å­˜ä¸º30KBâ€”150KBä¸ç­‰ï¼‰ -------------  æŒ‰3\n";
 
     int choose;
     cin>>choose;
 
     if(choose==0)
     {
-        cout<<"ÊäÈëÏëÉèÖÃµÄÄÚ´æÌõ¼ş£º___(KB)\n";
+        cout<<"è¾“å…¥æƒ³è®¾ç½®çš„å†…å­˜æ¡ä»¶ï¼š___(KB)\n";
         int m;
         cin>>m;
 
@@ -345,8 +346,8 @@ int main()
         BUCKET *bucket=new BUCKET[w*d];
 
 
-        FILE *fp = fopen("MV Sktech Various_k.csv", "w+"); //´´½¨csvÎÄ¼şÓÃÓÚ´æ´¢Êı¾İ
-        fprintf(fp,"ÄÚ´æ(KB),KÖµ,Í°Êı,Update Time,Throught(Mbps),Precision,ARE,AAE,Log10(ARE)\n");
+        FILE *fp = fopen("MV Sktech Various_k.csv", "w+"); //åˆ›å»ºcsvæ–‡ä»¶ç”¨äºå­˜å‚¨æ•°æ®
+        fprintf(fp,"å†…å­˜(KB),Kå€¼,æ¡¶æ•°,Update Time,Throught(Mbps),Precision,ARE,AAE,Log10(ARE)\n");
 
         for(int i=0;i<6;i++)
         {
@@ -355,8 +356,8 @@ int main()
             Update_Sketch(bucket,w);
             clock_t time2=clock();
 
-            double Update_Times=(double)(time2-time1)/CLOCKS_PER_SEC;//¸üĞÂËùÓÃÊ±¼ä
-            double throughput=(Real_Item_Nums/1000000.0)/Update_Times;//¸üĞÂµÄÍÌÍÂÁ¿£¬µ¥Î»ÊÇMbps
+            double Update_Times=(double)(time2-time1)/CLOCKS_PER_SEC;//æ›´æ–°æ‰€ç”¨æ—¶é—´
+            double throughput=(Real_Item_Nums/1000000.0)/Update_Times;//æ›´æ–°çš„ååé‡ï¼Œå•ä½æ˜¯Mbps
 
             //Print_Sketch_Info();
             Get_All_Key();
@@ -367,10 +368,10 @@ int main()
             Parameter_Top_K_Version(Top_K[i],Estimated_KV_Vector,Real_KV_Vector,fp);
 
             cout<<"**************************************\n";
-            cout<<"¸üĞÂµÄÍÌÍÂÁ¿(Throught)£º"<<throughput<<"Mbps\n";
-            cout<<"¸üĞÂËùÓÃÊ±¼ä(Update Time)£º"<<Update_Times<<"s\n";
+            cout<<"æ›´æ–°çš„ååé‡(Throught)ï¼š"<<throughput<<"Mbps\n";
+            cout<<"æ›´æ–°æ‰€ç”¨æ—¶é—´(Update Time)ï¼š"<<Update_Times<<"s\n";
             cout<<"**************************************\n";
-            cout<<"Í°Êı£º"<<w*d<<"\n";
+            cout<<"æ¡¶æ•°ï¼š"<<w*d<<"\n";
             Estimated_KV_MAP.clear();
             Real_KV_Map.clear();
             All_Key.clear();
@@ -383,12 +384,12 @@ int main()
 
     else if(choose==1)
     {
-        cout<<"ÊäÈëÏëÉèÖÃµÄKÖµÌõ¼ş£º___\n";
+        cout<<"è¾“å…¥æƒ³è®¾ç½®çš„Kå€¼æ¡ä»¶ï¼š___\n";
         int k;
         cin>>k;
 
-        FILE *fp = fopen("MV Sktech Various_memory_k.csv", "w+"); //´´½¨csvÎÄ¼şÓÃÓÚ´æ´¢Êı¾İ
-        fprintf(fp,"KÖµ,ÄÚ´æ(KB),Í°Êı,Update Time,Throught(Mbps),Precision,ARE,AAE,Log10(ARE)\n");
+        FILE *fp = fopen("MV Sktech Various_memory_k.csv", "w+"); //åˆ›å»ºcsvæ–‡ä»¶ç”¨äºå­˜å‚¨æ•°æ®
+        fprintf(fp,"Kå€¼,å†…å­˜(KB),æ¡¶æ•°,Update Time,Throught(Mbps),Precision,ARE,AAE,Log10(ARE)\n");
 
 
         for(int i=0;i<6;i++)
@@ -404,8 +405,8 @@ int main()
             Update_Sketch(bucket,w);
             clock_t time2=clock();
 
-            double Update_Times=(double)(time2-time1)/CLOCKS_PER_SEC;//¸üĞÂËùÓÃÊ±¼ä
-            double throughput=(Real_Item_Nums/1000000.0)/Update_Times;//¸üĞÂµÄÍÌÍÂÁ¿£¬µ¥Î»ÊÇMbps
+            double Update_Times=(double)(time2-time1)/CLOCKS_PER_SEC;//æ›´æ–°æ‰€ç”¨æ—¶é—´
+            double throughput=(Real_Item_Nums/1000000.0)/Update_Times;//æ›´æ–°çš„ååé‡ï¼Œå•ä½æ˜¯Mbps
 
             //Print_Sketch_Info();
             Get_All_Key();
@@ -416,10 +417,10 @@ int main()
             Parameter_Top_K_Version(k,Estimated_KV_Vector,Real_KV_Vector,fp);
 
             cout<<"**************************************\n";
-            cout<<"¸üĞÂµÄÍÌÍÂÁ¿(Throught)£º"<<throughput<<"Mbps\n";
-            cout<<"¸üĞÂËùÓÃÊ±¼ä(Update Time)£º"<<Update_Times<<"s\n";
+            cout<<"æ›´æ–°çš„ååé‡(Throught)ï¼š"<<throughput<<"Mbps\n";
+            cout<<"æ›´æ–°æ‰€ç”¨æ—¶é—´(Update Time)ï¼š"<<Update_Times<<"s\n";
             cout<<"**************************************\n";
-            cout<<"Í°Êı£º"<<w*d<<"\n";
+            cout<<"æ¡¶æ•°ï¼š"<<w*d<<"\n";
             Estimated_KV_MAP.clear();
             Real_KV_Map.clear();
             All_Key.clear();
@@ -432,7 +433,7 @@ int main()
     }
     else if(choose==2)
     {
-        cout<<"ÊäÈëÏëÉèÖÃµÄÄÚ´æÌõ¼ş£º___(KB)\n";
+        cout<<"è¾“å…¥æƒ³è®¾ç½®çš„å†…å­˜æ¡ä»¶ï¼š___(KB)\n";
         int m;
         cin>>m;
         int memory=m*1024;
@@ -440,8 +441,8 @@ int main()
         BUCKET *bucket=new BUCKET[w*d];
 
 
-        FILE *fp = fopen("MV Sktech Various_T.csv", "w+"); //´´½¨csvÎÄ¼şÓÃÓÚ´æ´¢Êı¾İ
-        fprintf(fp,"ÄÚ´æ(KB),ãĞÖµT,Í°Êı,Update Time,Throught(Mbps),Precision,ARE,AAE,Log10(ARE),ReCall,F1 Score\n");
+        FILE *fp = fopen("MV Sktech Various_T.csv", "w+"); //åˆ›å»ºcsvæ–‡ä»¶ç”¨äºå­˜å‚¨æ•°æ®
+        fprintf(fp,"å†…å­˜(KB),é˜ˆå€¼T,æ¡¶æ•°,Update Time,Throught(Mbps),Precision,ARE,AAE,Log10(ARE),ReCall,F1 Score\n");
 
         for(int i=0;i<6;i++)
         {
@@ -450,8 +451,8 @@ int main()
             Update_Sketch(bucket,w);
             clock_t time2=clock();
 
-            double Update_Times=(double)(time2-time1)/CLOCKS_PER_SEC;//¸üĞÂËùÓÃÊ±¼ä
-            double throughput=(Real_Item_Nums/1000000.0)/Update_Times;//¸üĞÂµÄÍÌÍÂÁ¿£¬µ¥Î»ÊÇMbps
+            double Update_Times=(double)(time2-time1)/CLOCKS_PER_SEC;//æ›´æ–°æ‰€ç”¨æ—¶é—´
+            double throughput=(Real_Item_Nums/1000000.0)/Update_Times;//æ›´æ–°çš„ååé‡ï¼Œå•ä½æ˜¯Mbps
 
             //Print_Sketch_Info();
             Get_All_Key();
@@ -464,10 +465,10 @@ int main()
 
 
             cout<<"**************************************\n";
-            cout<<"¸üĞÂµÄÍÌÍÂÁ¿(Throught)£º"<<throughput<<"Mbps\n";
-            cout<<"¸üĞÂËùÓÃÊ±¼ä(Update Time)£º"<<Update_Times<<"s\n";
+            cout<<"æ›´æ–°çš„ååé‡(Throught)ï¼š"<<throughput<<"Mbps\n";
+            cout<<"æ›´æ–°æ‰€ç”¨æ—¶é—´(Update Time)ï¼š"<<Update_Times<<"s\n";
             cout<<"**************************************\n";
-            cout<<"Í°Êı£º"<<w*d<<"\n";
+            cout<<"æ¡¶æ•°ï¼š"<<w*d<<"\n";
             Estimated_KV_MAP.clear();
             Real_KV_Map.clear();
             All_Key.clear();
@@ -480,12 +481,12 @@ int main()
     }
     else if(choose==3)
     {
-        cout<<"ÊäÈëÏëÉèÖÃµÄTÖµÌõ¼ş£º___\n";
+        cout<<"è¾“å…¥æƒ³è®¾ç½®çš„Tå€¼æ¡ä»¶ï¼š___\n";
         int t;
         cin>>t;
 
-        FILE *fp = fopen("MV Sktech Various_memory_T.csv", "w+"); //´´½¨csvÎÄ¼şÓÃÓÚ´æ´¢Êı¾İ
-        fprintf(fp,"TÖµ,ÄÚ´æ(KB),Í°Êı,Update Time,Throught(Mbps),Precision,ARE,AAE,Log10(ARE),ReCall,F1 Score\n");
+        FILE *fp = fopen("MV Sktech Various_memory_T.csv", "w+"); //åˆ›å»ºcsvæ–‡ä»¶ç”¨äºå­˜å‚¨æ•°æ®
+        fprintf(fp,"Tå€¼,å†…å­˜(KB),æ¡¶æ•°,Update Time,Throught(Mbps),Precision,ARE,AAE,Log10(ARE),ReCall,F1 Score\n");
 
 
         for(int i=0;i<6;i++)
@@ -501,8 +502,8 @@ int main()
             Update_Sketch(bucket,w);
             clock_t time2=clock();
 
-            double Update_Times=(double)(time2-time1)/CLOCKS_PER_SEC;//¸üĞÂËùÓÃÊ±¼ä
-            double throughput=(Real_Item_Nums/1000000.0)/Update_Times;//¸üĞÂµÄÍÌÍÂÁ¿£¬µ¥Î»ÊÇMbps
+            double Update_Times=(double)(time2-time1)/CLOCKS_PER_SEC;//æ›´æ–°æ‰€ç”¨æ—¶é—´
+            double throughput=(Real_Item_Nums/1000000.0)/Update_Times;//æ›´æ–°çš„ååé‡ï¼Œå•ä½æ˜¯Mbps
 
             //Print_Sketch_Info();
             Get_All_Key();
@@ -513,10 +514,10 @@ int main()
             Parameter_Threshold_Version(t,Estimated_KV_Vector,Real_KV_Vector,fp);
 
             cout<<"**************************************\n";
-            cout<<"¸üĞÂµÄÍÌÍÂÁ¿(Throught)£º"<<throughput<<"Mbps\n";
-            cout<<"¸üĞÂËùÓÃÊ±¼ä(Update Time)£º"<<Update_Times<<"s\n";
+            cout<<"æ›´æ–°çš„ååé‡(Throught)ï¼š"<<throughput<<"Mbps\n";
+            cout<<"æ›´æ–°æ‰€ç”¨æ—¶é—´(Update Time)ï¼š"<<Update_Times<<"s\n";
             cout<<"**************************************\n";
-            cout<<"Í°Êı£º"<<w*d<<"\n";
+            cout<<"æ¡¶æ•°ï¼š"<<w*d<<"\n";
             Estimated_KV_MAP.clear();
             Real_KV_Map.clear();
             All_Key.clear();
